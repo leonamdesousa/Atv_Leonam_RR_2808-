@@ -1,0 +1,35 @@
+#Questão C
+.data
+    format: .asciiz "s = "
+.text
+.globl main
+
+main:
+    li $t0, 5       # Carrega o valor 5 para $t0 (j = 5)
+    
+    li $t1, 0       # Inicializa i com 0
+    
+    loop:
+        bgt $t1, $t0, end_loop  # Se i >= j, sai do loop
+        
+        add $t2, $t1, $t1  # Calcula 2 * i
+        add $t2, $t2, $t1  # Calcula 2 * i + i = 3 * i
+        
+        add $t3, $s0, $t2  # Calcula s + 3 * i
+        
+        move $s0, $t3      # Atualiza o valor de s
+        
+        addi $t1, $t1, 1  # Incrementa i
+        j loop            # Volta ao início do loop
+        
+    end_loop:
+        # Preparando os argumentos para a chamada printf
+        la $a0, format    # Carrega o endereço da string formatada
+        li $v0, 4         # Carrega o código de syscall para imprimir string
+        syscall           # Chama o serviço do sistema
+        move $a0, $s0      # Coloca s no argumento $a0
+        li $v0, 1         # Carrega o código de syscall para imprimir int
+        syscall  
+
+        li $v0, 10        # Carrega o código de syscall para sair
+        syscall           # Chama o serviço do sistema tua 4 
