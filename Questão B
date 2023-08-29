@@ -1,0 +1,47 @@
+#Questão B
+.data
+    i: .word 0
+    j: .word 0
+    format: .asciiz "j = %d\n"
+
+.text
+.globl main
+
+main:
+    li $t0, 12       # Carrega o valor 12 para $t0 (j = 12)
+    
+    # Lê o valor de i
+    li $v0, 5        # Código de syscall para ler inteiro
+    syscall
+    move $t1, $v0    # Move o valor lido para $t1 (i)
+    
+    # Compara i com j
+    bge $t1, $t0, else_branch  # Branch para else se i >= j
+    
+    # Se i < j
+    add $t2, $t1, $t1  # Calcula 2 * i
+    addi $t2, $t2, 8   # Calcula 2 * i + 8
+    
+    # Preparando os argumentos para a chamada printf
+    move $a0, $t2      # Coloca j no argumento $a0
+    la $a1, format     # Carrega o endereço da string formatada
+    li $v0, 4          # Carrega o código de syscall para imprimir string
+    syscall            # Chama o serviço do sistema
+    
+    j end_if
+    
+else_branch:
+    mul $t3, $t1, 8    # Calcula i * 8
+    mul $t4, $t0, 6    # Calcula j * 6
+    add $t4, $t4, $t3  # Calcula j * 6 + i * 8
+    addi $t4, $t4, 12  # Calcula j * 6 + i * 8 + 12
+    
+    # Preparando os argumentos para a chamada printf
+    move $a0, $t4      # Coloca j no argumento $a0
+    la $a1, format     # Carrega o endereço da string formatada
+    li $v0, 4          # Carrega o código de syscall para imprimir string
+    syscall            # Chama o serviço do sistema
+    
+end_if:
+    li $v0, 10         # Carrega o código de syscall para sair
+    syscall            # Chama o serviço do sistema
