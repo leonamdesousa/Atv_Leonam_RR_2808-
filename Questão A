@@ -1,0 +1,25 @@
+## Questão A
+### leonam 
+.data
+    a: .word 0
+    b: .word 0
+    t: .word 0
+    format: .asciiz "t = %d\n"
+
+.text
+.globl main
+
+main:
+    li $t0, 12       # Carrega o valor 12 para $t0 (a = 12)
+    li $t1, 5        # Carrega o valor 5 para $t1 (b = 5)
+    add $t2, $t0, $t0  # Calcula a + a
+    sub $t2, $t2, $t1  # Calcula (a + a) - (a + b)
+    
+    # Preparando os argumentos para a chamada printf
+    move $a0, $t2    # Coloca t no argumento $a0
+    la $a1, format   # Carrega o endereço da string formatada
+    li $v0, 4        # Carrega o código de syscall para imprimir string
+    syscall          # Chama o serviço do sistema
+
+    li $v0, 10       # Carrega o código de syscall para sair
+    syscall          # Chama o serviço do sistema
