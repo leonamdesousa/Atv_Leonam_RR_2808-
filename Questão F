@@ -1,0 +1,62 @@
+.data
+    nota: .space 16     # Reserva espaço para 4 inteiros (4 * 4 bytes)
+    total: .word 0
+    format1: .asciiz "Valor %d: "
+    format2: .asciiz "%d "
+    format3: .asciiz "\nMedia: %d\n"
+
+.text
+.globl main
+
+main:
+    li $t0, 0        # Inicializa indice com 0
+    
+loop1:
+    bge $t0, 4, end_loop1  # Se indice >= 4, sai do loop
+    
+    # Preparando os argumentos para a chamada printf
+    move $a0, $t0         # Coloca indice no argumento $a0
+    la $a1, format1      # Carrega o endereço da string formatada
+    li $v0, 4            # Carrega o código de syscall para imprimir string
+    syscall              # Chama o serviço do sistema
+    
+    li $v0, 5            # Código de syscall para ler inteiro
+    syscall              # Chama o serviço do sistema
+    sw $v0, nota($t0)    # Armazena o valor lido em nota[indice]
+    
+    addi $t0, $t0, 1     # Incrementa indice
+    j loop1              # Volta ao início do loop
+    
+end_loop1:
+    # Imprime "Valores informados: "
+    la $a0, format2      # Carrega o endereço da string formatada
+    li $v0, 4            # Carrega o código de syscall para imprimir string
+    syscall              # Chama o serviço do sistema
+    
+    li $t1, 0            # Inicializa indice com 0
+    
+loop2:
+    bge $t1, 4, end_loop2  # Se indice >= 4, sai do loop
+    
+    # Preparando os argumentos para a chamada printf
+    lw $a0, nota($t1)    # Carrega nota[indice] para $a0
+    la $a1, format2      # Carrega o endereço da string formatada
+    li $v0, 1            # Carrega o código de syscall para imprimir inteiro
+    syscall              # Chama o serviço do sistema
+    
+    add $t2, $t2, $a0    # Adiciona nota[indice] ao total
+    addi $t1, $t1, 1     # Incrementa indice
+    j loop2              # Volta ao início do loop
+    
+end_loop2:
+    div $t2, $t2, 4      # Divide o total por 4 para calcular a média
+    mflo $t3             # Move o resultado da divisão para $t3
+    
+    # Preparando os argumentos para a chamada printf
+    move $a0, $t3        # Coloca a média no argumento $a0
+    la $a1, format3      # Carrega o endereço da string formatada
+    li $v0, 4            # Carrega o código de syscall para imprimir string
+    syscall              # Chama o serviço do sistema
+    
+    li $v0, 10           # Carrega o código de syscall para sair
+    syscall              # Chama o serviço do sistema
