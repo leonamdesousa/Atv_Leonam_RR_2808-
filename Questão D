@@ -1,0 +1,27 @@
+#Questão D
+.data
+    v1: .word 0
+    v2: .float 0.0
+    format: .asciiz "v1=%d, v2=%f\n"
+
+.text
+.globl main
+
+main:
+    li $v0, 5         # Carrega o código de syscall para ler inteiro
+    syscall           # Chama o serviço do sistema
+    move $t0, $v0     # Move o valor lido para $t0 (v1)
+    
+    li $v0, 6         # Carrega o código de syscall para ler float
+    syscall           # Chama o serviço do sistema
+    mov.s $f0, $v0    # Move o valor lido para $f0 (v2)
+    
+    # Preparando os argumentos para a chamada printf
+    move $a0, $t0     # Coloca v1 no argumento $a0
+    mov.s $f12, $f0   # Coloca v2 no argumento $f12
+    la $a1, format    # Carrega o endereço da string formatada
+    li $v0, 2         # Carrega o código de syscall para imprimir string
+    syscall           # Chama o serviço do sistema
+    
+    li $v0, 10        # Carrega o código de syscall para sair
+    syscall           # Chama o serviço do sistema
